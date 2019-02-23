@@ -4,13 +4,31 @@ const keys = require("./keys.js");
 const axios = require("axios");
 const Spotify = require('node-spotify-api');
 const spotify = new Spotify(keys.spotify);
-const moment = require("moment")
+const moment = require("moment");
+const fs = require("fs");
 
 var command = process.argv[2];
 var searched = process.argv.slice(3).join('+');
 
 if(searched.length <= 0){
     searched = ''
+}
+
+if(command === 'do-what-it-says'){
+
+    fs.readFile("random.txt", "utf8", function(error, data) {
+        if (error) {
+            return console.log(error);
+        }
+    
+        var random = data.split(",");
+
+        command = random[0];
+        searched = random[1];
+
+        console.log(command, searched);
+    
+    })
 }
 
 if(command === 'concert-this'){
@@ -38,7 +56,50 @@ else if(command === 'spotify-this-song'){
         searched = 'Ace+of+Base'
     }
 
-    spotify.search({ type: 'track', query: searched }, function(err, data) {
+    spotifySearch(searched);
+
+}
+else if(command === 'movie-this'){
+
+    axios.get("http://www.omdbapi.com/?t=" + searched + "&y=&plot=short&apikey=trilogy")
+    .then(function(response) {
+
+        let title = response.data.Title
+        let year = response.data.Year
+        let imdbRating = response.data.Ratings[0].Value
+        let rtRating = response.data.Ratings[1].Value
+        let country = response.data.Country
+        let lang = response.data.Language
+        let plot = response.data.Plot
+        let actors = response.data.Actors
+
+        console.log(' Title: ' + title + '\n', 'Plot: ' + plot + '\n', 'Actors: ' + actors + '\n', 'Year: ' + year + '\n', 'IMDB Rating: ' + imdbRating + '\n', 'Rotten Tomatoes: ' + rtRating + '\n' + ' Country: ' + country + '\n', 'Language: ' + lang + '\n');
+        }
+    );
+}
+else if(command === 'do-what-it-says'){
+
+    fs.readFile("random.txt", "utf8", function(error, data) {
+        if (error) {
+            return console.log(error);
+        }
+    
+        var random = data.split(",");
+
+        searched = random[1];
+
+        spotifySearch(searched)
+    
+    })
+}
+
+else{
+    console.log('enter valid command!');
+}
+
+var spotifySearch = function(item){
+
+    spotify.search({ type: 'track', query: item }, function(err, data) {
         if (err) {
         return console.log('Error occurred: ' + err);
         }
@@ -52,16 +113,4 @@ else if(command === 'spotify-this-song'){
             console.log(' Artist: ' + artist + '\n', 'Title: ' + song + '\n', 'Sample: ' + link + '\n', 'Album: ' + album + '\n');
         }
     })
-
 }
-else if(command === 'movie-this'){
-    console.log('search movie ' + searched)
-}
-else if(command === 'do-what-it-says'){
-    console.log('Woooo!!')
-}
-else{
-    console.log('enter valid command!');
-}
-
-
