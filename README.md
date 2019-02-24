@@ -2,7 +2,18 @@
 
 ## This app allows you to search songs, movies, and bands in Terminal.
 
-### Before you can search you must got to the 'Javascript' folder and begin the terminal command with `node liri.js`. After this you can search using the following commands:
+### Before you can search you must got to the 'Javascript' folder in Terminal and begin the terminal command with `node liri.js`. After this you can search using the following commands:
+
+### You must also make an account with Spotify Developer to get access to a `Client ID` and a `Client Secret`. Then put these credentials in a file named ".env" with this format:
+
+```js
+# Spotify API keys
+
+SPOTIFY_ID=your-spotify-id
+SPOTIFY_SECRET=your-spotify-secret
+
+```
+
 
 #### Use the following commands to search:
 

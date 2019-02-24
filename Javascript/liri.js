@@ -6,32 +6,39 @@ const Spotify = require('node-spotify-api');
 const spotify = new Spotify(keys.spotify);
 const moment = require("moment");
 const fs = require("fs");
+const colors = require("colors")
 
 var command = process.argv[2];
 var searched = process.argv.slice(3).join('+');
+
+var spotifySearch = function(item){
+
+    spotify.search({ type: 'track', query: item }, function(err, data) {
+        if (err) {
+        return console.log(colors.red('Error occurred: ' + err));
+        }
+
+        for(let i = 0; i < 5; i++){
+            let artist = data.tracks.items[i].artists[0].name; 
+            let song = data.tracks.items[i].name; 
+            let link = data.tracks.items[i].external_urls.spotify; 
+            let album = data.tracks.items[i].album.name;
+            
+            console.log(colors.green(' Artist: ' + artist + '\n', 'Title: ' + song + '\n', 'Sample: ' + link + '\n', 'Album: ' + album + '\n'));
+        }
+    })
+}
 
 if(searched.length <= 0){
     searched = ''
 }
 
-if(command === 'do-what-it-says'){
-
-    fs.readFile("random.txt", "utf8", function(error, data) {
-        if (error) {
-            return console.log(error);
-        }
-    
-        var random = data.split(",");
-
-        command = random[0];
-        searched = random[1];
-
-        console.log(command, searched);
-    
-    })
-}
-
 if(command === 'concert-this'){
+
+    if(searched === ''){
+
+        searched = 'Ed+Sheeran'
+    }
 
     axios.get("https://rest.bandsintown.com/artists/" + searched + "/events?app_id=codingbootcamp")
     .then(function(response) {
@@ -44,7 +51,7 @@ if(command === 'concert-this'){
 
         date = moment(date).format("dddd, MMMM Do YYYY, h:mm:ss a");
     
-        console.log(' Venue: ' + venue + '\n', 'Location: ' + loc + '\n', 'Date: ' + date + '\n')
+        console.log(colors.blue(' Venue: ' + venue + '\n', 'Location: ' + loc + '\n', 'Date: ' + date + '\n'))
     }
   })
 }
@@ -61,6 +68,11 @@ else if(command === 'spotify-this-song'){
 }
 else if(command === 'movie-this'){
 
+    if(searched === ''){
+
+        searched = 'Mr+Nobody'
+    }
+
     axios.get("http://www.omdbapi.com/?t=" + searched + "&y=&plot=short&apikey=trilogy")
     .then(function(response) {
 
@@ -73,7 +85,7 @@ else if(command === 'movie-this'){
         let plot = response.data.Plot
         let actors = response.data.Actors
 
-        console.log(' Title: ' + title + '\n', 'Plot: ' + plot + '\n', 'Actors: ' + actors + '\n', 'Year: ' + year + '\n', 'IMDB Rating: ' + imdbRating + '\n', 'Rotten Tomatoes: ' + rtRating + '\n' + ' Country: ' + country + '\n', 'Language: ' + lang + '\n');
+        console.log(colors.yellow(' Title: ' + title + '\n', 'Plot: ' + plot + '\n', 'Actors: ' + actors + '\n', 'Year: ' + year + '\n', 'IMDB Rating: ' + imdbRating + '\n', 'Rotten Tomatoes: ' + rtRating + '\n' + ' Country: ' + country + '\n', 'Language: ' + lang + '\n'));
         }
     );
 }
@@ -81,7 +93,7 @@ else if(command === 'do-what-it-says'){
 
     fs.readFile("random.txt", "utf8", function(error, data) {
         if (error) {
-            return console.log(error);
+            return console.log(colors.red(error));
         }
     
         var random = data.split(",");
@@ -94,23 +106,5 @@ else if(command === 'do-what-it-says'){
 }
 
 else{
-    console.log('enter valid command!');
-}
-
-var spotifySearch = function(item){
-
-    spotify.search({ type: 'track', query: item }, function(err, data) {
-        if (err) {
-        return console.log('Error occurred: ' + err);
-        }
-
-        for(let i = 0; i < 5; i++){
-            let artist = data.tracks.items[i].artists[0].name; 
-            let song = data.tracks.items[i].name; 
-            let link = data.tracks.items[i].external_urls.spotify; 
-            let album = data.tracks.items[i].album.name;
-            
-            console.log(' Artist: ' + artist + '\n', 'Title: ' + song + '\n', 'Sample: ' + link + '\n', 'Album: ' + album + '\n');
-        }
-    })
+    console.log(colors.red('Enter Valid Command!'));
 }
