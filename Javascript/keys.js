@@ -1,4 +1,3 @@
-console.log('Searching... \n')
 
 exports.spotify = {
   id: process.env.SPOTIFY_ID,

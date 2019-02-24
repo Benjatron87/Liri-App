@@ -11,6 +11,8 @@ const colors = require("colors")
 var command = process.argv[2];
 var searched = process.argv.slice(3).join('+');
 
+console.log(colors.grey('Searching... \n'))
+
 var spotifySearch = function(item){
 
     spotify.search({ type: 'track', query: item }, function(err, data) {
