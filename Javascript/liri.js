@@ -43,7 +43,10 @@ if(command === 'concert-this'){
     }
 
     axios.get("https://rest.bandsintown.com/artists/" + searched + "/events?app_id=codingbootcamp")
-    .then(function(response) {
+    .then(function(err, response) {
+    if (err) {
+        return console.log(colors.red('Error occurred: ' + err))
+    }
 
     for(let i = 0; i < response.data.length; i++){
 
@@ -76,7 +79,10 @@ else if(command === 'movie-this'){
     }
 
     axios.get("http://www.omdbapi.com/?t=" + searched + "&y=&plot=short&apikey=trilogy")
-    .then(function(response) {
+    .then(function(err, response) {
+        if (err) {
+            return console.log(colors.red('Error occurred: ' + err))
+        }
 
         let title = response.data.Title
         let year = response.data.Year
